@@ -12,10 +12,6 @@ _Every weekend I build a machine learning project to get my hands dirty in data 
 
 _so, buckle up for some code, memes and a little bit of theory._
 
-![](https://miro.medium.com/max/30/0*YaGverWwnFbK7Kwd.jpg?q=20)
-
-![](https://miro.medium.com/max/1600/0*YaGverWwnFbK7Kwd.jpg)
-
 [https://newsladder.net/fashion-a-never-ending-cycle/](https://newsladder.net/fashion-a-never-ending-cycle/)
 
 # STEP 1: PROBLEM STATEMENT AND BUSINESS CASE
