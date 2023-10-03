@@ -2,15 +2,11 @@
 
 [Sajjad Salaria](https://medium.com/@xoraus?source=post_page-----c0817b615ef8----------------------)
 
-[Feb 15](https://medium.com/datadriveninvestor/how-to-build-to-a-fashion-classifier-in-5-easy-steps-using-deep-learning-c0817b615ef8?source=post_page-----c0817b615ef8----------------------)  ·  6  min read
-
 _Every weekend I build a machine learning project to get my hands dirty in data science, this week I picked MNIST Dataset._
 
 > “You can have anything you want in life if you dress for it.” — Edith Head.
 
 _so, buckle up for some code, memes and a little bit of theory._
-
-[https://newsladder.net/fashion-a-never-ending-cycle/](https://newsladder.net/fashion-a-never-ending-cycle/)
 
 # STEP 1: PROBLEM STATEMENT AND BUSINESS CASE
 
