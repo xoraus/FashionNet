@@ -1,7 +1,5 @@
 # How to build to a Fashion Classifier in 5 easy steps using Deep Learning.
 
-
-
 [Sajjad Salaria](https://medium.com/@xoraus?source=post_page-----c0817b615ef8----------------------)
 
 [Feb 15](https://medium.com/datadriveninvestor/how-to-build-to-a-fashion-classifier-in-5-easy-steps-using-deep-learning-c0817b615ef8?source=post_page-----c0817b615ef8----------------------)  ·  6  min read
@@ -18,8 +16,17 @@ _so, buckle up for some code, memes and a little bit of theory._
 
 The fashion training set consists of 70,000 images divided into 60,000 training and 10,000 testing samples. Dataset sample consists of 28x28 grayscale image, associated with a label from 10 classes.
 
-> The 10 classes are as follows:  
-> 0 => T-shirt/top 1 => Trouser 2 => Pullover 3 => Dress 4 => Coat 5 => Sandal 6 => Shirt 7 => Sneaker 8 => Bag 9 => Ankle boot
+> The 10 classes are as follows:
+- 0 T-shirt/top
+- 1 Trouser
+- 2 Pullover
+- 3 Dress
+- 4 Coat
+- 5 Sandal
+- 6 Shirt
+- 7 Sneaker
+- 8 Bag
+- 9 Ankle boot
 
 Each image is 28 pixels in height and 28 pixels in width, for a total of 784 pixels in total. Each pixel has a single pixel-value associated with it, indicating the lightness or darkness of that pixel, with higher numbers meaning darker. This pixel-value is an integer between 0 and 255.
 
@@ -45,67 +52,87 @@ The neurons collect signals from input channels named dendrites, processes infor
 
 # STEP 2: IMPORTING DATA
 
+```python
 # import libraries   
 import pandas as pd # Import Pandas for data manipulation using dataframes  
 import numpy as np # Import Numpy for data statistical analysis   
 import matplotlib.pyplot as plt # Import matplotlib for data visualisation  
 import seaborn as sns  
 import random
+```
 
 ## Data frames creation for both training and testing datasets
 
+```python
 fashion_train_df = pd.read_csv(‘input/fashion-mnist_train.csv’,sep=’,’)  
 fashion_test_df = pd.read_csv(‘input/fashion-mnist_test.csv’, sep = ‘,’)
+```
 
 # STEP 3: VISUALIZATION OF THE DATASET
 
 Let’s view the head of the training dataset
 
+```python
 # 784 indicates 28x28 pixels and 1 coloumn for the label  
 # After you check the tail, 60,000 training dataset are present  
 fashion_train_df.head()
+```
 
 ![](https://miro.medium.com/max/30/1*o6g-cGPnuDry-F9DE_7dhg.png?q=20)
 
 ![](https://miro.medium.com/max/1008/1*o6g-cGPnuDry-F9DE_7dhg.png)
 
+```python
 df.head()
+```
 
+```python
 # Let's view the last elements in the training dataset  
 fashion_train_df.tail()
+```
 
 ![](https://miro.medium.com/max/30/1*FKmEdPKnPsua6Rv6gGGHTA.png?q=20)
 
 ![](https://miro.medium.com/max/1017/1*FKmEdPKnPsua6Rv6gGGHTA.png)
 
+```python
 df.tail()
+```
 
-similarly for testing data
+## similarly for testing data
 
+```python
 # Let’s view the head of the testing dataset  
+
 fashion_test_df.head()# Let's view the last elements in the testing dataset  
 fashion_test_df.tail()fashion_train_df.shape  
 (60000, 785)
+```
 
 ## Create training and testing arrays
 
+```python
 training = np.array(fashion_train_df, dtype = ‘float32’)  
 testing = np.array(fashion_test_df, dtype=’float32')
+```
 
 ## Let’s view some images!
 
+```python
 i = random.randint(1,60000) # select any random index from 1 to 60,000  
 plt.imshow( training[i,1:].reshape((28,28)) ) # reshape and plot the imageplt.imshow( training[i,1:].reshape((28,28)) , cmap = 'gray') # reshape and plot the image# Remember the 10 classes decoding is as follows:  
-# 0 => T-shirt/top  
-# 1 => Trouser  
-# 2 => Pullover  
-# 3 => Dress  
-# 4 => Coat  
-# 5 => Sandal  
-# 6 => Shirt  
-# 7 => Sneaker  
-# 8 => Bag  
-# 9 => Ankle boot
+```
+
+0 => T-shirt/top  
+1 => Trouser  
+2 => Pullover  
+3 => Dress  
+4 => Coat  
+5 => Sandal  
+6 => Shirt  
+7 => Sneaker  
+8 => Bag  
+9 => Ankle boot
 
 ![](https://miro.medium.com/max/30/1*TFWLKpqYAdc7TnFQM4kVBA.png?q=20)
 
@@ -115,6 +142,7 @@ shirt
 
 ## Let’s view more images in a grid format
 
+```python
 W_grid = 15  
 L_grid = 15# fig, axes = plt.subplots(L_grid, W_grid)  
 # subplot return the figure object and axes object  
@@ -125,6 +153,7 @@ for i in np.arange(0, W_grid * L_grid): # create evenly spaces variables# Select
     axes[i].imshow( training[index,1:].reshape((28,28)) )  
     axes[i].set_title(training[index,0], fontsize = 8)  
     axes[i].axis('off')plt.subplots_adjust(hspace=0.4)
+```
 
 ![](https://miro.medium.com/max/30/1*UyXeI5_cf2aZhjdJmLhtlQ.png?q=20)
 
@@ -136,15 +165,19 @@ images in a grid format
 
 ## Prepare the training and testing dataset
 
+```python
 X_train = training[:,1:]/255  
 y_train = training[:,0]X_test = testing[:,1:]/255  
 y_test = testing[:,0]from sklearn.model_selection import train_test_splitX_train, X_validate, y_train, y_validate = train_test_split(X_train, y_train, test_size = 0.2, random_state = 12345)  
+```
 
 ## unpack the tuple
 
+```python
 X_train = X_train.reshape(X_train.shape[0], *(28, 28, 1))  
 X_test = X_test.reshape(X_test.shape[0], *(28, 28, 1))  
 X_validate = X_validate.reshape(X_validate.shape[0], *(28, 28, 1))
+```
 
 # What the Keras you’re talking about!
 
@@ -154,6 +187,7 @@ X_validate = X_validate.reshape(X_validate.shape[0], *(28, 28, 1))
 
 [https://www.reddit.com/r/ProgrammerHumor/comments/a8ru4p/machine_learning_be_like/](https://www.reddit.com/r/ProgrammerHumor/comments/a8ru4p/machine_learning_be_like/)
 
+```python
 import keras # open source Neural network library madke our life much easier# y_train = keras.utils.to_categorical(y_train, 10)  
 # y_test = keras.utils.to_categorical(y_test, 10)cnn_model = Sequential()# Try 32 fliters first then 64  
 cnn_model.add(Conv2D(64,3, 3, input_shape = (28,28,1), activation='relu'))  
@@ -166,6 +200,7 @@ cnn_model.add(Dense(output_dim = 10, activation = 'sigmoid'))cnn_model.compile(l
                         nb_epoch = epochs,  
                         verbose = 1,  
                         validation_data = (X_validate, y_validate))
+```
 
 # STEP 5: EVALUATING THE MODEL
 
@@ -177,11 +212,14 @@ cnn_model.add(Dense(output_dim = 10, activation = 'sigmoid'))cnn_model.compile(l
 
 [https://hacktilldawn.com/2016/09/25/inception-modules-explained-and-implemented/](https://hacktilldawn.com/2016/09/25/inception-modules-explained-and-implemented/)
 
+```python
 evaluation = cnn_model.evaluate(X_test, y_test)  
 print('Test Accuracy : {:.3f}'.format(evaluation[1]))
+```
 
 Get the predictions for the test data
 
+```python
 predicted_classes = cnn_model.predict_classes(X_test)L = 5  
 W = 5  
 fig, axes = plt.subplots(L, W, figsize = (12,12))  
@@ -194,6 +232,7 @@ plt.figure(figsize = (14,10))
 sns.heatmap(cm, annot=True)  
 # Sum the diagonal element to get the total true correct valuesfrom sklearn.metrics import classification_reportnum_classes = 10  
 target_names = ["Class {}".format(i) for i in range(num_classes)]print(classification_report(y_test, predicted_classes, target_names = target_names))
+```
 
 # References
 
