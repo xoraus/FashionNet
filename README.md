@@ -1,118 +1,86 @@
-# How to build to a Fashion Classifier in 5 easy steps using Deep Learning.
+# FashionNet - A Fashion Classifier using Deep Learning
 
-[Sajjad Salaria](https://medium.com/@xoraus?source=post_page-----c0817b615ef8----------------------)
+[![KERAS MEMES](https://miro.medium.com/proxy/1*QbekpmNE8lCvSQzHLTPDHQ.png)](https://miro.medium.com/proxy/1*QbekpmNE8lCvSQzHLTPDHQ.png)
 
-_Every weekend I build a machine learning project to get my hands dirty in data science, this week I picked MNIST Dataset._
+Welcome to the Fashion Classifier project, where we'll build a fashion classifier using deep learning in five easy steps.
 
-> “You can have anything you want in life if you dress for it.” — Edith Head.
+## Table of Contents
 
-_so, buckle up for some code, memes and a little bit of theory._
+- [Introduction](#introduction)
+- [Step 1: Problem Statement and Business Case](#step-1-problem-statement-and-business-case)
+- [Step 2: Importing Data](#step-2-importing-data)
+- [Step 3: Visualization of the Dataset](#step-3-visualization-of-the-dataset)
+- [Step 4: Training the Model](#step-4-training-the-model)
+- [Step 5: Evaluating the Model](#step-5-evaluating-the-model)
+- [Appendix](#appendix)
 
-# STEP 1: PROBLEM STATEMENT AND BUSINESS CASE
 
-The fashion training set consists of 70,000 images divided into 60,000 training and 10,000 testing samples. Dataset sample consists of 28x28 grayscale image, associated with a label from 10 classes.
+## Introduction
 
-> The 10 classes are as follows:
-- 0 T-shirt/top
-- 1 Trouser
-- 2 Pullover
-- 3 Dress
-- 4 Coat
-- 5 Sandal
-- 6 Shirt
-- 7 Sneaker
-- 8 Bag
-- 9 Ankle boot
+> "You can have anything you want in life if you dress for it." — Edith Head.
 
-Each image is 28 pixels in height and 28 pixels in width, for a total of 784 pixels in total. Each pixel has a single pixel-value associated with it, indicating the lightness or darkness of that pixel, with higher numbers meaning darker. This pixel-value is an integer between 0 and 255.
+In this project, we'll build a fashion classifier using Convolutional Neural Networks (CNNs), a class of deep learning models designed for image processing. CNNs consist of convolutional layers, pooling layers, and fully connected layers. We'll cover image preprocessing, loss functions, optimizers, model evaluation, overfitting prevention, data augmentation, hyperparameter tuning, and transfer learning.
 
-![Image result for KERAS MEMES](https://miro.medium.com/proxy/1*QbekpmNE8lCvSQzHLTPDHQ.png)
+## Step 1: Problem Statement and Business Case
 
-[https://becominghuman.ai/param-ishan-for-deep-learning-101-d6f049970584?gi=686405f4538d](https://becominghuman.ai/param-ishan-for-deep-learning-101-d6f049970584?gi=686405f4538d)
+The fashion training set consists of 70,000 images divided into 60,000 training and 10,000 testing samples. Each image is a 28x28 grayscale image associated with one of 10 classes. These classes include T-shirt/top, Trouser, Pullover, Dress, Coat, Sandal, Shirt, Sneaker, Bag, and Ankle boot.
 
-But before diving into the Coding, let’s first understand what an artificial neural network is, An  **artificial neural network**  is an interconnected group of nodes, similar to the vast  **network**  of neurons in  **a**  brain. Here, each circular node represents an  **artificial neuron**  and an arrow represents  **a**  connection from the output of one  **artificial neuron**  to the input of another.
 
-![](https://miro.medium.com/max/25/0*8gKiHcB0ZwNmqi6i.png?q=20)
-
-![](https://miro.medium.com/max/300/0*8gKiHcB0ZwNmqi6i.png)
-
-[https://en.wikipedia.org/wiki/File:Colored_neural_network.svg](https://en.wikipedia.org/wiki/File:Colored_neural_network.svg)
-
-The neurons collect signals from input channels named dendrites, processes information in its nucleus and then generates an output in a long thin branch called axon. Human learning occurs adaptively by varying the bond strength between these neurons.
-
-![](https://miro.medium.com/max/30/0*X24ORhTkVU7Zpe0S.png?q=20)
-
-![](https://miro.medium.com/max/300/0*X24ORhTkVU7Zpe0S.png)
-
-[https://simple.wikipedia.org/wiki/File:Neuron.svg](https://simple.wikipedia.org/wiki/File:Neuron.svg)
-
-# STEP 2: IMPORTING DATA
+## Step 2: Importing Data
 
 ```python
-# import libraries   
-import pandas as pd # Import Pandas for data manipulation using dataframes  
-import numpy as np # Import Numpy for data statistical analysis   
-import matplotlib.pyplot as plt # Import matplotlib for data visualisation  
-import seaborn as sns  
+# Import libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 import random
+
+# Data frames creation for both training and testing datasets
+fashion_train_df = pd.read_csv('input/fashion-mnist_train.csv', sep=',')
+fashion_test_df = pd.read_csv('input/fashion-mnist_test.csv', sep=',')
 ```
 
-## Data frames creation for both training and testing datasets
+## STEP 3: VISUALIZATION OF THE DATASET
+
+#### Let’s view the head of the training dataset
 
 ```python
-fashion_train_df = pd.read_csv(‘input/fashion-mnist_train.csv’,sep=’,’)  
-fashion_test_df = pd.read_csv(‘input/fashion-mnist_test.csv’, sep = ‘,’)
-```
-
-# STEP 3: VISUALIZATION OF THE DATASET
-
-Let’s view the head of the training dataset
-
-```python
-# 784 indicates 28x28 pixels and 1 coloumn for the label  
-# After you check the tail, 60,000 training dataset are present  
 fashion_train_df.head()
+fashion_train_df.tail()
 ```
 
 ![](https://miro.medium.com/max/30/1*o6g-cGPnuDry-F9DE_7dhg.png?q=20)
 
 ![](https://miro.medium.com/max/1008/1*o6g-cGPnuDry-F9DE_7dhg.png)
 
-```python
-df.head()
-```
+Similarly, for the testing dataset.
 
 ```python
-# Let's view the last elements in the training dataset  
-fashion_train_df.tail()
+fashion_test_df.head()
+fashion_test_df.tail()
+```
+
+#### Now. let's view some images from the dataset.
+
+```python
+i = random.randint(1, 60000)
+plt.imshow(training[i, 1:].reshape((28, 28)), cmap='gray')
 ```
 
 ![](https://miro.medium.com/max/30/1*FKmEdPKnPsua6Rv6gGGHTA.png?q=20)
 
 ![](https://miro.medium.com/max/1017/1*FKmEdPKnPsua6Rv6gGGHTA.png)
 
-```python
-df.tail()
-```
 
-## similarly for testing data
-
-```python
-# Let’s view the head of the testing dataset  
-
-fashion_test_df.head()# Let's view the last elements in the testing dataset  
-fashion_test_df.tail()fashion_train_df.shape  
-(60000, 785)
-```
-
-## Create training and testing arrays
+#### Create training and testing arrays
 
 ```python
 training = np.array(fashion_train_df, dtype = ‘float32’)  
 testing = np.array(fashion_test_df, dtype=’float32')
 ```
 
-## Let’s view some images!
+#### Let’s view some images!
 
 ```python
 i = random.randint(1,60000) # select any random index from 1 to 60,000  
@@ -136,7 +104,7 @@ plt.imshow( training[i,1:].reshape((28,28)) ) # reshape and plot the imageplt.im
 
 shirt
 
-## Let’s view more images in a grid format
+ #### Let’s view more images in a grid format
 
 ```python
 W_grid = 15  
@@ -157,46 +125,61 @@ for i in np.arange(0, W_grid * L_grid): # create evenly spaces variables# Select
 
 images in a grid format
 
-# STEP 4: TRAINING THE MODEL
+## STEP 4: TRAINING THE MODEL
 
-## Prepare the training and testing dataset
-
-```python
-X_train = training[:,1:]/255  
-y_train = training[:,0]X_test = testing[:,1:]/255  
-y_test = testing[:,0]from sklearn.model_selection import train_test_splitX_train, X_validate, y_train, y_validate = train_test_split(X_train, y_train, test_size = 0.2, random_state = 12345)  
-```
-
-## unpack the tuple
+#### To prepare the training and testing dataset, we'll perform some data preprocessing.
 
 ```python
-X_train = X_train.reshape(X_train.shape[0], *(28, 28, 1))  
-X_test = X_test.reshape(X_test.shape[0], *(28, 28, 1))  
-X_validate = X_validate.reshape(X_validate.shape[0], *(28, 28, 1))
+X_train = training[:, 1:] / 255
+y_train = training[:, 0]
+
+X_test = testing[:, 1:] / 255
+y_test = testing[:, 0]
+
+# Split the training data into training and validation sets
+from sklearn.model_selection import train_test_split
+
+X_train, X_validate, y_train, y_validate = train_test_split(X_train, y_train, test_size=0.2, random_state=12345)
 ```
 
-# What the Keras you’re talking about!
+#### Now, let's reshape the data for modeling.
+
+```python
+X_train = X_train.reshape(X_train.shape[0], 28, 28, 1)
+X_test = X_test.reshape(X_test.shape[0], 28, 28, 1)
+X_validate = X_validate.reshape(X_validate.shape[0], 28, 28, 1)
+```
+
+#### We'll create a convolutional neural network (CNN) model for fashion classification.
 
 ![](https://miro.medium.com/max/30/0*yLRvbwmM_RYU7vXC.jpg?q=20)
 
 ![](https://miro.medium.com/max/750/0*yLRvbwmM_RYU7vXC.jpg)
 
-[https://www.reddit.com/r/ProgrammerHumor/comments/a8ru4p/machine_learning_be_like/](https://www.reddit.com/r/ProgrammerHumor/comments/a8ru4p/machine_learning_be_like/)
-
 ```python
-import keras # open source Neural network library madke our life much easier# y_train = keras.utils.to_categorical(y_train, 10)  
-# y_test = keras.utils.to_categorical(y_test, 10)cnn_model = Sequential()# Try 32 fliters first then 64  
-cnn_model.add(Conv2D(64,3, 3, input_shape = (28,28,1), activation='relu'))  
-cnn_model.add(MaxPooling2D(pool_size = (2, 2)))cnn_model.add(Dropout(0.25))# cnn_model.add(Conv2D(32,3, 3, activation='relu'))  
-# cnn_model.add(MaxPooling2D(pool_size = (2, 2)))cnn_model.add(Flatten())  
-cnn_model.add(Dense(output_dim = 32, activation = 'relu'))  
-cnn_model.add(Dense(output_dim = 10, activation = 'sigmoid'))cnn_model.compile(loss ='sparse_categorical_crossentropy', optimizer=Adam(lr=0.001),metrics =['accuracy'])epochs = 50history = cnn_model.fit(X_train,  
-                        y_train,  
-                        batch_size = 512,  
-                        nb_epoch = epochs,  
-                        verbose = 1,  
-                        validation_data = (X_validate, y_validate))
+import keras
+from keras.models import Sequential
+from keras.optimizers import Adam
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Dropout, Flatten, Dense
+
+cnn_model = Sequential()
+
+cnn_model.add(Conv2D(64, 3, 3, input_shape=(28, 28, 1), activation='relu'))
+cnn_model.add(MaxPooling2D(pool_size=(2, 2)))
+cnn_model.add(Dropout(0.25))
+
+cnn_model.add(Flatten())
+cnn_model.add(Dense(output_dim=32, activation='relu'))
+cnn_model.add(Dense(output_dim=10, activation='sigmoid'))
+
+cnn_model.compile(loss='sparse_categorical_crossentropy', optimizer=Adam(lr=0.001), metrics=['accuracy'])
+
+epochs = 50
+history = cnn_model.fit(X_train, y_train, batch_size=512, nb_epoch=epochs, verbose=1, validation_data=(X_validate, y_validate))
 ```
+
+[https://www.reddit.com/r/ProgrammerHumor/comments/a8ru4p/machine_learning_be_like/](https://www.reddit.com/r/ProgrammerHumor/comments/a8ru4p/machine_learning_be_like/)
 
 # STEP 5: EVALUATING THE MODEL
 
@@ -206,34 +189,117 @@ cnn_model.add(Dense(output_dim = 10, activation = 'sigmoid'))cnn_model.compile(l
 
 ![](https://miro.medium.com/max/400/0*zCSaizPSZPOfe0Rc)
 
-[https://hacktilldawn.com/2016/09/25/inception-modules-explained-and-implemented/](https://hacktilldawn.com/2016/09/25/inception-modules-explained-and-implemented/)
+
+#### Now, it's time to evaluate the model's performance.
 
 ```python
-evaluation = cnn_model.evaluate(X_test, y_test)  
-print('Test Accuracy : {:.3f}'.format(evaluation[1]))
+evaluation = cnn_model.evaluate(X_test, y_test)
+print('Test Accuracy: {:.3f}'.format(evaluation[1]))
 ```
 
-Get the predictions for the test data
+#### Let's also get the predictions for the test data and visualize them.
 
 ```python
-predicted_classes = cnn_model.predict_classes(X_test)L = 5  
-W = 5  
-fig, axes = plt.subplots(L, W, figsize = (12,12))  
-axes = axes.ravel() #for i in np.arange(0, L * W):    
-    axes[i].imshow(X_test[i].reshape(28,28))  
-    axes[i].set_title("Prediction Class = {:0.1f}\n True Class = {:0.1f}".format(predicted_classes[i], y_test[i]))  
-    axes[i].axis('off')plt.subplots_adjust(wspace=0.5)from sklearn.metrics import confusion_matrix  
-cm = confusion_matrix(y_test, predicted_classes)  
-plt.figure(figsize = (14,10))  
-sns.heatmap(cm, annot=True)  
-# Sum the diagonal element to get the total true correct valuesfrom sklearn.metrics import classification_reportnum_classes = 10  
-target_names = ["Class {}".format(i) for i in range(num_classes)]print(classification_report(y_test, predicted_classes, target_names = target_names))
+predicted_classes = cnn_model.predict_classes(X_test)
+
+# Visualize the predictions
+L = 5
+W = 5
+fig, axes = plt.subplots(L, W, figsize=(12, 12))
+axes = axes.ravel()
+
+for i in np.arange(0, L * W):
+    axes[i].imshow(X_test[i].reshape(28, 28))
+    axes[i].set_title("Prediction Class = {:0.1f}\nTrue Class = {:0.1f}".format(predicted_classes[i], y_test[i]))
+    axes[i].axis('off')
 ```
 
-# References
+##### Display a confusion matrix
 
-[1]  [https://github.com/zalandoresearch/fashion-mnist](https://github.com/zalandoresearch/fashion-mnist)
+```python
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test, predicted_classes)
+plt.figure(figsize=(14, 10))
+sns.heatmap(cm, annot=True)
+```
 
-[2]  [https://www.pyimagesearch.com/2019/02/11/fashion-mnist-with-keras-and-deep-learning/](https://www.pyimagesearch.com/2019/02/11/fashion-mnist-with-keras-and-deep-learning/)
+##### Print classification report
 
-[3]  [https://pravarmahajan.github.io/fashion/](https://pravarmahajan.github.io/fashion/)
+```python
+from sklearn.metrics import classification_report
+num_classes = 10
+target_names = ["Class {}".format(i) for i in range(num_classes)]
+print(classification_report(y_test, predicted_classes, target_names=target_names))
+```
+
+## Appendix:
+
+### Convolutional Neural Networks (CNNs)
+
+CNNs are a class of deep learning models specifically designed for image processing. They consist of convolutional layers, pooling layers, and fully connected layers. 
+
+- **Convolutional Layers**: These layers apply filters to extract features from input images. The filters slide over the input image, capturing spatial patterns.
+- **Pooling Layers**: Pooling layers reduce the spatial dimensions of the feature maps, which helps reduce computational complexity.
+- **Dropout**: Dropout layers are used to prevent overfitting.
+
+ They randomly deactivate a portion of neurons during training.
+
+#### Image Preprocessing
+
+- **Normalization**: Normalizing pixel values to a range between 0 and 1 helps in training convergence.
+- **Reshaping**: Images are reshaped to fit the input size of the neural network.
+
+#### Loss Functions and Optimizers
+
+- **Loss Function**: The choice of loss function depends on the task. In this project, we use sparse categorical cross-entropy, which is suitable for multi-class classification.
+- **Optimizer**: The Adam optimizer is used with a learning rate of 0.001 for parameter updates.
+
+#### Model Evaluation
+
+- Evaluation metrics include accuracy, precision, recall, and F1-score.
+- The confusion matrix visually represents the classification results.
+- A classification report provides a comprehensive view of model performance.
+
+#### Overfitting and Regularization
+
+- Overfitting occurs when the model performs well on the training data but poorly on unseen data. Techniques like dropout layers help prevent overfitting.
+
+#### Data Augmentation
+
+- Data augmentation techniques increase the diversity of the training dataset by applying transformations like rotation, scaling, and flipping.
+
+#### Hyperparameter Tuning
+
+- Finding optimal hyperparameters, such as batch size and number of epochs, is crucial for model performance.
+
+#### Transfer Learning
+
+- Transfer learning involves using pre-trained models and fine-tuning them for specific tasks. It can save training time and resources.
+
+
+## Appendix
+
+### Additional Resources
+
+- [Deep Learning with Keras](https://keras.io/): Official documentation for the Keras deep learning framework.
+- [TensorFlow](https://www.tensorflow.org/): An open-source machine learning framework that can be used alongside Keras for more advanced deep learning projects.
+- [Scikit-learn](https://scikit-learn.org/stable/): A powerful machine learning library for various tasks, including data preprocessing and model evaluation.
+- [Matplotlib](https://matplotlib.org/): A popular Python library for creating visualizations and plots.
+- [Seaborn](https://seaborn.pydata.org/): An easy-to-use Python data visualization library that works well with Matplotlib.
+- [Reddit - Machine Learning Humor](https://www.reddit.com/r/ProgrammerHumor/comments/a8ru4p/machine_learning_be_like/): A lighthearted take on the complexities of machine learning.
+
+### Contributors
+
+- [Sajjad Salaria](https://github.com/xoraus) - Project Lead
+
+### License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### Acknowledgments
+
+Special thanks to the authors and contributors of the following resources:
+
+- [Zalando Research - Fashion-MNIST Dataset](https://github.com/zalandoresearch/fashion-mnist)
+- [PyImageSearch - Fashion-MNIST with Keras and Deep Learning](https://www.pyimagesearch.com/2019/02/11/fashion-mnist-with-keras-and-deep-learning/)
+
